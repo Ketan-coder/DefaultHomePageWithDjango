@@ -1,0 +1,56 @@
+<!-- tasks/templates/tasks/index.html -->
+
+{% extends 'tasks/base.html' %}
+
+{% block content %}
+
+    <div class="header">
+        {% comment %} <h1>Todo List</h1> {% endcomment %}
+        <div class="market-prices">
+            <h4>Market Prices:</h4>
+            <ul>
+                <li>
+                    Nifty50: <span id="nifty50" style="{% if nifty50_change >= 0 %}color: green{% else %}color: red{% endif %} font-weight: 800; font-size: larger;">{{ nifty50_price|floatformat:2 }}</span>
+                    {% if nifty50_change %}
+                        (<span style="{% if nifty50_change >= 0 %}color: green{% else %}color: red{% endif %}">{% if nifty50_change >= 0 %}+{% else %}-{% endif %}{{ nifty50_change|floatformat:2 }} INR</span>)
+                        <a target="_blank" href="https://finance.yahoo.com/quote/%5ENSEI?p=^NSEI&.tsrc=fin-srch">View Chart</a>
+                    {% endif %}
+                </li>
+                <li>
+                    BankNifty: <span id="banknifty" style="{% if banknifty_change >= 0 %}color: green{% else %}color: red{% endif %} font-weight: 800; font-size: larger;">{{ banknifty_price|floatformat:2 }}</span>
+                    {% if banknifty_change %}
+                        (<span style="{% if banknifty_change >= 0 %}color: green{% else %}color: red{% endif %}">{% if banknifty_change >= 0 %}+{% else %}-{% endif %}{{ banknifty_change|floatformat:2 }} INR</span>)
+                        <a target="_blank" href="https://finance.yahoo.com/quote/%5ENSEBANK?p=^NSEBANK&.tsrc=fin-srch">View Chart</a>
+                    {% endif %}
+                </li>
+                <li>
+                    FinNifty: <span id="finnifty" style="{% if finnifty_change >= 0 %}color: green{% else %}color: red{% endif %} font-weight: 800; font-size: larger;">{{ finnifty_price|floatformat:2 }}</span>
+                    {% if finnifty_change %}
+                        (<span style="{% if finnifty_change >= 0 %}color: green{% else %}color: red{% endif %}">{% if finnifty_change >= 0 %}+{% else %}-{% endif %}{{ finnifty_change|floatformat:2 }} INR</span>)
+                        <a target="_blank" href="https://finance.yahoo.com/quote/NIFTY_FIN_SERVICE.NS?p=NIFTY_FIN_SERVICE.NS">View Chart</a>
+                    {% endif %}
+                </li>
+            </ul>
+        </div>
+
+
+    <h1>Todo List</h1>
+
+    <form method="POST" action="{% url 'tasks:add_task' %}">
+        {% csrf_token %}
+        <input type="text" name="title" placeholder="Add a task (max - 3 tasks)" required>
+        <button type="submit">Add</button>
+    </form>
+
+    <ul>
+        {% for todo in todos %}
+            <li{% if todo.completed %} class="completed"{% endif %} style="border-bottom: #efefef 1px solid; margin-bottom: 1%;">
+                {{ todo.title }}
+                {% if not todo.completed %}
+                    <a href="{% url 'tasks:complete_task' todo.id %}">Complete</a>
+                {% endif %}
+                <a href="{% url 'tasks:delete_task' todo.id %}">Delete</a>
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}
